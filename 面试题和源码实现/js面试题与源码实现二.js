@@ -539,3 +539,55 @@
 //     }
 // }
 
+// 20.new的实现原理:
+    // 新建一个对象=>连接原型=>绑定构造函数(绑定this=>返回这个对象(如果传入的构造函数不返回对象)
+
+// function MyNew(func){
+//     let target = {};//创建一个新对象
+//     target.__proto__ = func.prototype;//连接原型
+//     let result = func.apply(this);
+
+//     return typeof result === "object"?result:target;
+// }
+    
+// 21.call的实现原理:实际上call内部用的是隐式调用this,但是优先级却比隐式的要高
+// Function.prototype.MyCall = function(){
+//     [context,args] = [...arguments];//context为绑定的对象,args为传入的参数
+//     context = context || window;//当没有传入参数的时候,context==null的时候,默认绑定的对象为window
+
+//     context.fn = this;//实际上这句是隐式绑定
+//     let result = context.fn(args);//执行函数,
+//     delete context.fn;//删除对象的fn属性
+//     return result;//返回函数执行后相应的结果
+// }
+// function a(){
+//     return this.name;
+// };
+// let obj={name:"huang"};
+// a.MyCall(obj);
+
+// 22.apply实现原理:实际上apply内部用得也是隐式条用this,但是优先级却比隐式的要高
+
+// Function.prototype.MyApply = function(context,arr){
+//      context = context || window;//当不传入context这个参数的时候,默认参数为window
+//     context.fn = this;
+//     let result = context.fn(arr);
+//     delete context.fn;
+//     return result;
+// }
+
+// function a(){
+//     return this.name;
+// }
+// let obj={name:"huang"};
+// console.log( a.MyApply(obj) );
+
+// 23.bind原理实现,内部可以通过apply或者call实现,或者不通过哦apply，call实现也可以,下面实现一个通过apply实现的
+// Function.prototype.MyBind = function(context){
+//     let _this = this;
+//     let parentArgs = Object.prototype.slice.call(arguments,1);//转换为数组
+//     return function(){
+//         let totalArgs = parentArgs.concat( Object.prototype.slice.call(arguments) );//合并两个函数的arguments
+//         _this.apply(context||window,totalArgs);//条用并绑定传进来的context
+//     }
+// }
